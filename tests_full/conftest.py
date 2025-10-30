@@ -1,5 +1,9 @@
 import pytest
 
 @pytest.fixture(scope="package")
-def api_auth():
-    pass
+def volume():
+    return 70
+
+@pytest.fixture(scope="function")
+def norbert():
+    return 2228
