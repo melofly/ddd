@@ -3,10 +3,13 @@ from services.auth.helpers.user_helper import UserHelper
 from services.auth.models.login.login_request import LoginRequest
 from services.auth.models.login.login_success_response import SuccessResponseLogin
 from services.auth.models.register.register_request import RegisterRequest
-from services.auth.models.register.register_success_response import SuccessResponseRegister
+from services.auth.models.register.register_success_response import (
+    SuccessResponseRegister,
+)
 from services.auth.models.user_me.me_success_response import SuccessResponseMe
 from services.general.base_service import BaseService
 from utils.api_utils import ApiUtils
+
 
 class AuthService(BaseService):
     SERVICE_URL = "http://127.0.0.1:8000"

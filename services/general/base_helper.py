@@ -1,5 +1,6 @@
 from utils.api_utils import ApiUtils
 
+
 class BaseHelper:
     ENDPOINT_PREFIX = None
 
