@@ -30,11 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install pytest requests curlify pydantic
-          fi
+          pip install -r requirements.txt
 
       - name: Start Docker Compose
         run: docker compose up -d
