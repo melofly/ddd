@@ -33,7 +33,7 @@ jobs:
           pip install pytest requests
 
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for Auth service
         run: |
