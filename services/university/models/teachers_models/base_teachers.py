@@ -11,7 +11,7 @@ class SubjectEnum(StrEnum):
 
 
 class BaseModelTeacher(BaseModel):
-    model_config = ConfigDict(extra='forbid')
+    model_config = ConfigDict(extra="forbid")
 
     first_name: str
     last_name: str
