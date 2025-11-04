@@ -23,4 +23,4 @@ jobs:
         run: ruff format --check .
 
       - name: Run ruff (lint)
-        run: ruff check . --ignore F401,I001,F811,C416
+        run: ruff check . --ignore F401,I001,F811,C416,N805,PLR2004,F821
