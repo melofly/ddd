@@ -57,6 +57,11 @@ jobs:
             sleep 2
           done
 
+      - name: Run tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest -v
+
       - name: Stop Docker containers
         if: always()
         run: docker compose down
