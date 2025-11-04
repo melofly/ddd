@@ -18,7 +18,6 @@ from services.university.university_service import UniversityService
 from utils.api_utils import ApiUtils
 from faker import Faker
 import random
-import json
 
 faker = Faker()
 
