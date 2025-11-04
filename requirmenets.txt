@@ -9,6 +9,7 @@ dnspython==2.8.0
 email-validator==2.3.0
 Faker==37.12.0
 filelock==3.20.0
+pydantic[email]>=2.0
 identify==2.6.15
 idna==3.11
 iniconfig==2.3.0
