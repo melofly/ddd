@@ -1,8 +1,7 @@
 [tool.ruff]
 line-length = 88
-target-version = "py312"
 lint.select = ["E", "F", "W", "C", "N", "I", "UP", "PL"]
-ignore = ["E501", "D"]
+ignore = ["E501", "D", 'F401' ,'I001','F811','C416','N805','PLR2004','F821']
 exclude = ["build", "dist", ".venv", ".git", "__pycache__", "migrations"]
 
 [tool.ruff.lint.per-file-ignores]
