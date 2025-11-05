@@ -6,8 +6,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  name: ruff-lint
   ruff-lint:
+    name: ruff-lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -72,5 +72,5 @@ jobs:
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: ./allure-report
-          publish_branch: gh-pages
+          publish_branch: test
           force_orphan: true
