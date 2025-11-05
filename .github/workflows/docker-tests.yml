@@ -25,6 +25,7 @@ jobs:
         run: ruff check .
 
   pytest:
+    name: Start Tests
     runs-on: ubuntu-latest
     needs: ruff-lint
 
