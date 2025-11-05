@@ -10,4 +10,4 @@ WORKDIR /back_api
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-CMD ["pytest", "-sv", "--alluredir=allure-results"]
+CMD ["pytest", "-sv", "--чalluredir=allure-results"]
