@@ -27,7 +27,6 @@ def auth_api_utils_anonym():
     api_utils = ApiUtils(url=AuthService.SERVICE_URL)
     return api_utils
 
-
 @pytest.fixture(scope="function", autouse=False)
 def university_api_utils_anonym():
     api_utils = ApiUtils(url=UniversityService.SERVICE_URL)
