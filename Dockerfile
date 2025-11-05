@@ -6,7 +6,7 @@ ENV PATH=$PATH:$JAVA_HOME/bin
 RUN wget -O /tmp/allure.zip -L https://github.com/allure-framework/allure2/releases/download/2.34.1/allure-2.34.1.zip && \
     unzip /tmp/allure.zip -d /opt/ && \
     ln -s /opt/allure-2.34.1/bin/allure /usr/local/bin/allure
-WORKDIR /back_api
+WORKDIR /Memory
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirmenets.txt
 COPY . .
