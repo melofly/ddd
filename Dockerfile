@@ -8,6 +8,6 @@ RUN wget -O /tmp/allure.zip -L https://github.com/allure-framework/allure2/relea
     ln -s /opt/allure-2.34.1/bin/allure /usr/local/bin/allure
 WORKDIR /back_api
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirmenets.txt
 COPY . .
 CMD ["pytest", "-sv", "--чalluredir=allure-results"]
