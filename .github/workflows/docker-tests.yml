@@ -1,9 +1,9 @@
 name: CI Pipeline
 
+
 on:
   pull_request:
-    types: [ main, conftest-test]
-  workflow_dispatch:
+    types: [opened, synchronize, reopened]
 
 jobs:
   lint:
