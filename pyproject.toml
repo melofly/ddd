@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 88
+lint.select = ["E", "F", "W", "C", "N", "I", "UP", "PL"]
+ignore = ["E501", "D", 'F401' ,'I001','F811','C416','N805','PLR2004','F821']
+exclude = ["build", "dist", ".venv", ".git", "__pycache__", "migrations"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "S101"]
+"scripts/*.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

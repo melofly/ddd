@@ -1,59 +1,62 @@
 import random
-
 import pytest
-# from logger.logger import Logger
+from services.university.models.grades_models.base_grade import MIN_MARK, MAX_MARK
 from services.university.models.grades_models.grades_request import GradesRequest
-from services.university.models.grades_models.stats.grades_stats_request import GradesStatsRequest
-from services.university.models.groups_models.groups_request import GroupsRequest
-from services.university.models.students_models.base_student import DegreeEnum
-from services.university.models.students_models.student_request import StudentRequest
-from services.university.models.teachers_models.base_teachers import SubjectEnum
-from services.university.models.teachers_models.teachers_request import TeacherRequest
+from services.university.models.grades_models.stats.grades_stats_request import (
+    GradesStatsRequest,
+)
 from services.university.university_service import UniversityService
 from faker import Faker
 
+from tests.conftest import university_api_test_student
+
 faker = Faker()
 
-class TestGroupApiContract:
-    @pytest.mark.usefixtures('university_api_test_group')
-    def test_200_status_create_grades(
-            self,
-            university_api_utils_admin,
-            university_api_test_teacher,
-            university_api_test_student
+
+class TestGradesApiContract:
+    @pytest.mark.usefixtures("university_api_test_group")
+    def test_success_create_grade(
+        self,
+        university_api_utils_admin,
+        university_api_test_teacher,
+        university_api_test_student,
     ):
-        # Logger.info('Создание оценки')
         university_service = UniversityService(api_utils=university_api_utils_admin)
         grade = GradesRequest(
             teacher_id=university_api_test_teacher.id,
             student_id=university_api_test_student.id,
             grade=random.choice([grade for grade in range(MIN_MARK, MAX_MARK + 1)]),
         )
+        res = university_service.create_grade(create_grade_req=grade)
 
-        grade_t = GradesRequest(
-            teacher_id=university_api_test_teacher.id,
-            student_id=university_api_test_student.id,
-            grade=random.choice([grade for grade in range(MIN_MARK, MAX_MARK + 1)]),
-        )
+        actual = res.student_id
+        excepted = university_api_test_student.id
+        assert actual == excepted, f"Сейчас: {actual},Должно: {excepted}"
 
-        grade_res = university_service.create_grade(create_grade_req=grade)
-        grade_res_t = university_service.create_grade(create_grade_req=grade_t)
+    def test_grades_stats_min_accurate(self, university_api_test_grades_and_stats):
+        grade_one, grade_two, stats = university_api_test_grades_and_stats
 
-        Logger.info('Подсчет статы')
+        actual = stats.min
+        expected = min(grade_one.grade, grade_two.grade)
+        assert actual == expected, f"Сейчас: {actual},Должно: {expected}"
 
-        grade_stats = GradesStatsRequest(
-            teacher_id=university_api_test_teacher.id,
-            student_id=university_api_test_student.id,
-            group_id=university_api_test_student.group_id
-        )
+    def test_grades_stats_max_accurate(self, university_api_test_grades_and_stats):
+        grade_one, grade_two, stats = university_api_test_grades_and_stats
 
-        grade_stats_response = university_service.get_grade_stats(stats_student=grade_stats)
+        actual = stats.max
+        expected = max(grade_one.grade, grade_two.grade)
+        assert actual == expected, f"Сейчас: {actual},Должно: {expected}"
 
-        actual_min_max = [grade_stats_response.max, grade_stats_response.min]
-        excepted_min_max = sorted([grade_res.grade, grade_res_t.grade], reverse=True)
+    def test_grades_stats_avg_accurate(self, university_api_test_grades_and_stats):
+        grade_one, grade_two, stats = university_api_test_grades_and_stats
 
-        actual_avg = grade_stats_response.avg
-        excepted_avg = (grade_stats_response.max + grade_stats_response.min) / grade_stats_response.count
+        actual = stats.avg
+        expected = (grade_one.grade + grade_two.grade) / 2
+        assert actual == expected, f"Сейчас: {actual},Должно: {expected}"
 
-        assert actual_min_max == excepted_min_max, f'{actual_min_max} вышло, а должно {excepted_min_max}'
-        assert actual_avg == excepted_avg, f'{actual_avg} вышло, а должно {excepted_avg}'
+    def test_grades_stats_count_accurate(self, university_api_test_grades_and_stats):
+        grade_one, grade_two, stats = university_api_test_grades_and_stats
+
+        actual = stats.count
+        expected = 2
+        assert actual == expected, f"Сейчас: {actual},Должно: {expected}"
