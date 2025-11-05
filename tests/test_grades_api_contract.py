@@ -7,8 +7,6 @@ from services.university.models.grades_models.stats.grades_stats_request import 
 )
 from services.university.university_service import UniversityService
 from faker import Faker
-import allure
-
 
 from tests.conftest import university_api_test_student
 
