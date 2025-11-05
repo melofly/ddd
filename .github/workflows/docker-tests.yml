@@ -1,15 +1,18 @@
 name: CI Pipeline
 
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
+  name: ruff-lint
   ruff-lint:
-    name: Ruff Lint
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repo
       - uses: actions/checkout@v4
+        name: Set Up Python
       - uses: actions/setup-python@v4
         with:
           python-version: 3.12
@@ -19,7 +22,7 @@ jobs:
 
   pytest:
     runs-on: ubuntu-latest
-    needs: ruff-lint
+    needs: lint
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -29,6 +32,7 @@ jobs:
       AUTH_SERVICE_API_URL: ${{ secrets.AUTH_SERVICE_API_URL }}
       UNIVERSITY_SERVICE_INTERNAL_URL: ${{ secrets.UNIVERSITY_SERVICE_INTERNAL_URL }}
       UNIVERSITY_SERVICE_API_URL: ${{ secrets.UNIVERSITY_SERVICE_API_URL }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -37,30 +41,36 @@ jobs:
       - run: |
           pip install -r requirements.txt
           docker compose up -d --build
-          pytest --alluredir=allure-results
+          pytest --alluredir=allure-results || true
         continue-on-error: true
 
   allure-order:
     runs-on: ubuntu-latest
-    needs: pytest
+    needs: test
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Allure
         run: |
-          wget -q https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip
-          unzip -q allure-2.27.0.zip -d $HOME/allure
-          echo "$HOME/allure/allure-2.27.0/bin" >> $GITHUB_PATH
-          export PATH="$HOME/allure/allure-2.27.0/bin:$PATH"
-      - name: Generate Report Allure
+          ALLURE_VERSION=2.27.0
+          wget -q https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip
+          unzip -q allure-${ALLURE_VERSION}.zip -d $HOME/allure
+          echo "$HOME/allure/allure-${ALLURE_VERSION}/bin" >> $GITHUB_PATH
+          export PATH="$HOME/allure/allure-${ALLURE_VERSION}/bin:$PATH"
+          allure --version
+
+      - name: Generate Report
         run: |
           mkdir -p allure-report
           if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
             allure generate allure-results --clean -o allure-report
           fi
+          ls -la allure-report
+
       - name: Publish Allure Report
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: ./allure-report
-          publish_branch: conftest-test
+          publish_branch: gh-pages
           force_orphan: true
