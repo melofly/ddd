@@ -6,18 +6,21 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  lint:
+  name: ruff-lint
+  ruff-lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repo
       - uses: actions/checkout@v4
+        name: Set Up Python
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.12
       - run: |
           pip install ruff
           ruff check .
 
-  test:
+  pytest:
     runs-on: ubuntu-latest
     needs: lint
     env:
@@ -29,27 +32,25 @@ jobs:
       AUTH_SERVICE_API_URL: ${{ secrets.AUTH_SERVICE_API_URL }}
       UNIVERSITY_SERVICE_INTERNAL_URL: ${{ secrets.UNIVERSITY_SERVICE_INTERNAL_URL }}
       UNIVERSITY_SERVICE_API_URL: ${{ secrets.UNIVERSITY_SERVICE_API_URL }}
-      PYTHONPATH: .
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.12
       - run: |
           pip install -r requirements.txt
           docker compose up -d --build
           pytest --alluredir=allure-results || true
         continue-on-error: true
 
-  report:
-    if: ${{ always() }}
+  allure-order:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Allure CLI
+      - name: Install Allure
         run: |
           ALLURE_VERSION=2.27.0
           wget -q https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip
@@ -58,7 +59,7 @@ jobs:
           export PATH="$HOME/allure/allure-${ALLURE_VERSION}/bin:$PATH"
           allure --version
 
-      - name: Generate Allure Report
+      - name: Generate Report
         run: |
           mkdir -p allure-report
           if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
@@ -69,7 +70,7 @@ jobs:
       - name: Publish Allure Report
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: ./allure-report
           publish_branch: gh-pages
           force_orphan: true
