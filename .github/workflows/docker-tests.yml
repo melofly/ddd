@@ -60,7 +60,7 @@ jobs:
       - name: Publish Allure Report
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: ./allure-report
           publish_branch: conftest-test
           force_orphan: true
